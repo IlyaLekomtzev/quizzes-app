@@ -1,12 +1,13 @@
 import { useEffect, useMemo } from 'react';
 import { useStore } from 'effector-react';
 import { useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { quizEffects, quizStores, quizEvents } from '../../stores/quiz';
 import Question from '../../components/Question';
 import Loader from '../../components/Loader';
 import SuccessQuiz from '../../components/SuccessQuiz';
+import ProgressBar from '../../components/ProgressBar';
 import { Title, Wrapper } from '../../constants/styles';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const {
 	setCurrentQuestion,
@@ -110,6 +111,13 @@ const QuizPage = () => {
 					</motion.div>
 				)}
 			</AnimatePresence>
+
+			{!isSuccess && (
+				<ProgressBar
+					totalCount={questions.length}
+					currentStep={currentStep + 1}
+				/>
+			)}
 		</Wrapper>
 	);
 };
