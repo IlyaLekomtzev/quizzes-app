@@ -16,6 +16,8 @@ const {
 	incrementCurrentStep,
 	incrementRightAnswersCount,
 	finishQuiz,
+	addRightAnswer,
+	addWrongAnswer,
 } = quizEvents;
 const { getQuestionsFx } = quizEffects;
 const { $questions, $currentQuestion, $currentStep, $isSuccess } = quizStores;
@@ -52,8 +54,19 @@ const QuizPage = () => {
 	}, [questions]);
 
 	const handleQuestionSubmit = (answer: string) => {
-		if (answer === currentQuestion?.correct_answer) {
-			incrementRightAnswersCount();
+		if (currentQuestion) {
+			if (answer === currentQuestion.correct_answer) {
+				incrementRightAnswersCount();
+				addRightAnswer({
+					question: currentQuestion.question,
+					answer,
+				});
+			} else {
+				addWrongAnswer({
+					question: currentQuestion.question,
+					answer,
+				});
+			}
 		}
 
 		if (currentStep + 1 < questions.length) {

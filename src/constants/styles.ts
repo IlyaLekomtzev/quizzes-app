@@ -20,11 +20,11 @@ export const GlobalStyle = createGlobalStyle`
     * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
     }
 
     body {
         font-family: 'Open Sans', sans-serif;
-        box-sizing: border-box;
         color: ${Color.black};
         overflow-x: hidden;
     }
@@ -33,7 +33,7 @@ export const GlobalStyle = createGlobalStyle`
 export const Wrapper = styled.div`
 	width: 100%;
 	max-width: 800px;
-	margin: auto;
+	margin: 0 auto;
 	padding: ${indent(4)} 0;
 `;
 

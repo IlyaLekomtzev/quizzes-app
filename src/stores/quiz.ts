@@ -2,11 +2,14 @@ import { createEffect, createEvent, createStore } from 'effector';
 import { ApiRoute } from '../constants/routes';
 import client from '../services/axios';
 import { Question, QuestionsResponse } from '../types/models/api';
+import { Answer } from '../types/models/quiz';
 
 export const setCurrentQuestion = createEvent<Question>();
 export const setCurrentStep = createEvent<number>();
 export const incrementCurrentStep = createEvent();
 export const incrementRightAnswersCount = createEvent();
+export const addRightAnswer = createEvent<Omit<Answer, 'right'>>();
+export const addWrongAnswer = createEvent<Omit<Answer, 'right'>>();
 export const finishQuiz = createEvent();
 export const leaveQuiz = createEvent();
 
@@ -31,7 +34,7 @@ const $questions = createStore<Question[]>([])
 
 const $currentStep = createStore<number>(0)
 	.on(setCurrentStep, (_, index) => index)
-    .on(incrementCurrentStep, (state) => state + 1)
+	.on(incrementCurrentStep, (state) => state + 1)
 	.reset(leaveQuiz);
 
 const $currentQuestion = createStore<Question | null>(null)
@@ -46,13 +49,32 @@ const $isSuccess = createStore<boolean>(false)
 	.on(finishQuiz, (_) => true)
 	.reset(leaveQuiz);
 
+const $currentAnswers = createStore<Answer[]>([])
+	.on(addRightAnswer, (state, answer) => [
+		...state,
+		{
+			...answer,
+			right: true,
+		},
+	])
+	.on(addWrongAnswer, (state, answer) => [
+		...state,
+		{
+			...answer,
+			right: false,
+		},
+	])
+	.reset(leaveQuiz);
+
 const quizEvents = {
 	setCurrentQuestion,
-    setCurrentStep,
-    incrementCurrentStep,
-    incrementRightAnswersCount,
-    leaveQuiz,
-    finishQuiz
+	setCurrentStep,
+	incrementCurrentStep,
+	incrementRightAnswersCount,
+	addRightAnswer,
+	addWrongAnswer,
+	leaveQuiz,
+	finishQuiz,
 };
 
 const quizEffects = {
@@ -63,8 +85,9 @@ const quizStores = {
 	$questions,
 	$currentQuestion,
 	$currentStep,
-    $rightAnswersCount,
-    $isSuccess
+	$rightAnswersCount,
+	$isSuccess,
+	$currentAnswers,
 };
 
 export { quizEvents, quizEffects, quizStores };
